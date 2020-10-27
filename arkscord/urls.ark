@@ -1,0 +1,86 @@
+# ArkScript 3.0.13
+# ----------------------------------------------------------------------------
+
+(import "http.arkm")
+
+
+# Variable index
+(let RESPONSE-STATUS 0)
+(let RESPONSE-BODY 1)
+
+
+# Info
+(let info-url "https://github.com/4surix/arkscord")
+(let info-version "0.0.1")
+
+
+# Headers
+(let mk-headers
+    (fun (token)
+        (http:headers:create
+            "Authorization" (+ "Bot " token)
+
+            # No entiendo este pero lo pongo
+            "User-Agent" (+ "DiscordBot (" info-url ", " info-version ")")
+
+            "Content-Type" "application/json"
+        )
+    )
+)
+
+
+# Conexion a discord
+(let client-discord (http:client:create "https://discordapp.com" 80))
+
+
+(let mk-request
+    (fun (token) {
+
+        (let headers (mk-headers token))
+
+        (let get 
+            (fun (url)
+                (http:client:get client-discord url headers)
+            )
+        )
+
+        (fun (
+                # Attributs
+                &client-discord
+                &headers
+
+                # Methodes
+                &get
+            )
+            ()
+        )
+    })
+)
+
+
+(let url-api-prefix-version 
+    (fun (version) 
+        (+ "api/v" (toString version) "/")
+    )
+)
+
+(let url-api-channel-messages 
+    (fun (channel_id)
+        (+
+            (url-api-prefix-version 7)
+            "/channels/"
+            (toString channel_id)
+            "/messages"
+        )
+    )
+)
+
+(let url-api-channel
+    (fun (channel_id)
+        (+
+            (url-api-prefix-version 7)
+            "/channels/"
+            (toString channel_id)
+        )
+    )
+)

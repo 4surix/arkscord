@@ -1,0 +1,25 @@
+# ArkScript 3.0.13
+# ----------------------------------------------------------------------------
+
+(import "json.arkm")
+
+(import "../objects/channel.ark")
+
+
+(let convert-json-object-channel
+	(fun (channel)
+        (create-object-channel
+            (json:get channel "id")
+            (json:get channel "guild_id")
+            (json:get channel "name")
+            (json:get channel "type")
+            (json:get channel "position")
+            (json:get channel "permission_overwrites")
+            (json:get channel "rate_limit_per_user")
+            (json:get channel "nsfw")
+            (json:get channel "topic")
+            (json:get channel "last_message_id")
+            (json:get channel "parent_id")
+        )
+    )
+)

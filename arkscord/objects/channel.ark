@@ -1,0 +1,105 @@
+# ArkScript 3.0.13
+# ----------------------------------------------------------------------------
+
+(import "../urls.ark")
+
+
+(let create-object-channel
+    (fun (
+        id
+        guild-id
+        name
+        type
+        position
+        permission-overwrites 
+        rate-limit-per-user
+        nsfw
+        topic
+        last-message-id
+        parent-id
+    ) {
+
+        # Attributs
+        (mut last-id-msg-recup last-message-id)
+
+        # Methodes
+        (let get-messages
+            (fun (request limit before after around) {
+
+                (let url (+
+                    (url-api-channel-messages id)
+                    "?limit=" limit
+                    (if (nil? before) "" (+ "&before=" (toString before)))
+                    (if (nil? after)  "" (+ "&after=" (toString after)))
+                    (if (nil? around) "" (+ "&around=" (toString around)))
+                ))
+
+                (let response (request.get url))
+
+                (if (nil? response) nil
+                    (if (!= 200 (@ response RESPONSE-STATUS)) nil
+                        {
+                            (let body 
+                                (json:fromString (@ response RESPONSE-BODY))
+                            )
+
+                            (mut messages [])
+                            (mut index 0)
+                            (while (< index (len body)) {
+                                (let msg (@ body index))
+                                (set messages 
+                                    (append messages 
+                                        (convert-json-object-message msg)
+                                    )
+                                )
+                                (set index (+ index 1))
+                            })
+                            # Return
+                            messages
+                        }
+                    )
+                )
+
+            })
+        )
+        (let get-new-messages
+            (fun (request) {
+                (let messages
+                    (get-messages request id nil last-id-msg-recup nil)
+                )
+                (if (nil? messages) nil
+                    {
+                        (set last-id-msg-recup 
+                            (@ messages (- (len messages) 1))
+                            .id
+                        )
+                        messages
+                    }
+                )
+            })
+        )
+
+        (fun (
+                # Attributs
+                &id
+                &guild-id
+                &name
+                &type
+                &position
+                &permission-overwrites
+                &rate-limit-per-user
+                &nsfw
+                &topic
+                &last-message-id
+                &parent-id
+
+                &last-id-msg-recup
+
+                # Methodes
+                &get-messages
+                &get-new-messages
+            )
+            ()
+        )
+    })
+)

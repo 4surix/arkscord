@@ -1,0 +1,28 @@
+# ArkScript 3.0.13
+# ----------------------------------------------------------------------------
+
+(import "json.arkm")
+(import "../objects/message.ark")
+
+
+(let convert-json-object-message
+    (fun (msg)
+        (create-message
+            (json:get msg "id")
+            (json:get msg "type")
+            (json:get msg "content")
+            (json:get msg "channel_id")
+            (json:get msg "author")
+            (json:get msg "attachments")
+            (json:get msg "embeds")
+            (json:get msg "mentions")
+            (json:get msg "mention_roles")
+            (json:get msg "pinned")
+            (json:get msg "mention_everyone")
+            (json:get msg "tts")
+            (json:get msg "timestamp")
+            (json:get msg "edited_timestamp")
+            (json:get msg "flags")
+        )
+    )
+)

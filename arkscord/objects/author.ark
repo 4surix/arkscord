@@ -1,0 +1,18 @@
+# ArkScript 3.0.13
+# ----------------------------------------------------------------------------
+
+(let create-object-author
+    (fun (id name id_avatar discriminator public_flags bot) {
+        (fun (
+                # Attributs
+                &id
+                &name
+                &id_avatar
+                &discriminator
+                &public_flags
+                &bot
+            )
+            ()
+        )
+    })
+)

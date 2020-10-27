@@ -1,0 +1,20 @@
+# ArkScript 3.0.13
+# ----------------------------------------------------------------------------
+
+(import "json.arkm")
+
+(import "../objects/author.ark")
+
+
+(let convert-json-object-author
+    (fun (author)
+        (create-object-author
+            (json:get author "id")
+            (json:get author "username")
+            (json:get author "avatar")
+            (json:get author "discriminator")
+            (json:get author "public_flags")
+            (json:get author "bot")
+        )
+    )
+)

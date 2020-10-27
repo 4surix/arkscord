@@ -1,0 +1,23 @@
+# ArkScript 3.0.13
+# ----------------------------------------------------------------------------
+
+(import "arkscord/client.ark")
+
+
+(let token "TOKEN-BOT-DISCORD")
+
+(let bot (create-bot token))
+
+(bot.listen-channels-ids [
+    "513284461555744768"
+])
+
+(bot.on-message (fun (message) {
+    (print message.author.name ": " message.content)
+
+    (if (!= message.content "!stop") nil
+    	(set running false)
+    )
+}))
+
+(bot.run)

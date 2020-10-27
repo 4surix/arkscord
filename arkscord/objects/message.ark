@@ -1,0 +1,49 @@
+# ArkScript 3.0.13
+# ----------------------------------------------------------------------------
+
+(import "../convert/author.ark")
+
+
+(let create-message
+    (fun (
+        id
+        type
+        content
+        channel_id
+        author
+        attachments
+        embeds
+        mentions
+        mention_roles
+        pinned
+        mention_everyone
+        tts
+        timestamp
+        edited_timestamp
+        flags
+    ) {
+
+        (let author (convert-json-object-author author))
+
+        (fun (
+                # Attributs
+                &id
+                &type
+                &content
+                &channel_id
+                &author
+                &attachments
+                &embeds
+                &mentions
+                &mention_roles
+                &pinned
+                &mention_everyone
+                &tts
+                &timestamp
+                &edited_timestamp
+                &flags
+            )
+            ()
+        )
+    })
+)

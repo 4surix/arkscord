@@ -6,7 +6,7 @@ Module servant à interagir avec l'API [Discord](https://discord.com/) en langag
 ```clojure
 (let token "TOKEN-BOT-DISCORD")
 (let bot (create-bot token))
-(bot.listen-channels [
+(bot.listen-channels-ids [
     "513284461555744768"
 ])
 (bot.on-message (fun (message) {

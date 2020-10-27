@@ -1,0 +1,95 @@
+# ArkScript 3.0.13
+# ----------------------------------------------------------------------------
+
+(import "http.arkm")
+(import "json.arkm")
+
+(import "./urls.ark")
+(import "./objects/main.ark")
+
+
+(let version "0.0.1")
+
+
+# Bot
+(let create-bot
+    (fun (token) {
+
+        # Attribut
+        (mut running true)
+        (mut request (mk-request token))
+        (mut channels-listened [])
+
+        # Events
+        (mut func_on-message nil)
+        (let on-message (fun (func) (set func_on-message func)))
+
+        # Methodes
+        (let listen-channels-ids
+            (fun (ids-channels) 
+                (mut index 0)
+                (while (< index (len ids-channels)) {
+                    (let url (url-api-channel (@ ids-channels index)))
+                    (let response (request.get url))
+                    (if (nil? response) nil
+                        (if (!= 200 (@ response RESPONSE-STATUS)) nil
+                            {
+                                (set channels-listened
+                                    (append channels-listened
+                                        (convert-json-object-channel 
+                                            (json:fromString 
+                                                (@ response RESPOSE-BODY)
+                                ))))
+                            }
+                        )
+                    )
+                })
+            )
+        )
+        (let run '{
+            (while (= running true) {
+                (if (nil? func_on-message) nil
+                    {
+                        (mut index 0)
+                        (while (< index (len channels-listened)) {
+                            (let messages (
+                                (@ channels-listened index).get-new-messages
+                                request
+                            ))
+                            (if (nil? messages) nil
+                                {
+                                    (mut index__ 0)
+                                    (while (< index__ (len messages)) {
+                                        (func_on-message (@ messages index__))
+                                        (set index__ (+ index__ 1))
+                                    })
+                                }
+                            )
+                            (set index (+ index 1))
+                            (sys:sleep (* 1 1000))
+                        })
+                    }
+                )
+            })
+            (sys:sleep (* 1 1000))
+        })
+
+        (fun (
+                # Attributs
+                &token
+                &running
+                &request
+                &channels-listened
+
+                # Events
+                &on-message
+                &func_on-message
+
+                # Methodes
+                &listen-channels-ids
+                &run
+            )
+            ()
+        )
+    })
+)

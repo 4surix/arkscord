@@ -1,0 +1,6 @@
+# ArkScript 3.0.13
+# ----------------------------------------------------------------------------
+
+(import "./author.ark")
+(import "./channel.ark")
+(import "./message.ark")
