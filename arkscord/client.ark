@@ -6,6 +6,7 @@
 
 (import "./urls.ark")
 (import "./objects/main.ark")
+(import "./convert/main.ark")
 
 
 (let version "0.0.1")
@@ -26,29 +27,30 @@
 
         # Methodes
         (let listen-channels-ids
-            (fun (ids-channels) 
+            (fun (ids-channels) {
                 (mut index 0)
                 (while (< index (len ids-channels)) {
                     (let url (url-api-channel (@ ids-channels index)))
                     (let response (request.get url))
-                    (if (nil? response) nil
-                        (if (!= 200 (@ response RESPONSE-STATUS)) nil
+                    (if (not (nil? response))
+                        (if (= 200 (@ response RESPONSE-STATUS))
                             {
                                 (set channels-listened
                                     (append channels-listened
                                         (convert-json-object-channel 
                                             (json:fromString 
-                                                (@ response RESPOSE-BODY)
+                                                (@ response RESPONSE-BODY)
                                 ))))
                             }
                         )
                     )
+                    (set index (+ 1 index))
                 })
-            )
+            })
         )
-        (let run '{
+        (let run (quote {
             (while (= running true) {
-                (if (nil? func_on-message) nil
+                (if (not (nil? func_on-message))
                     {
                         (mut index 0)
                         (while (< index (len channels-listened)) {
@@ -56,7 +58,7 @@
                                 (@ channels-listened index).get-new-messages
                                 request
                             ))
-                            (if (nil? messages) nil
+                            (if (not (nil? messages))
                                 {
                                     (mut index__ 0)
                                     (while (< index__ (len messages)) {
@@ -72,7 +74,7 @@
                 )
             })
             (sys:sleep (* 1 1000))
-        })
+        }))
 
         (fun (
                 # Attributs

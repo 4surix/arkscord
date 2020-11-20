@@ -2,6 +2,7 @@
 # ----------------------------------------------------------------------------
 
 (import "../urls.ark")
+(import "../convert/message.ark")
 
 
 (let create-object-channel
@@ -9,7 +10,7 @@
         id
         guild-id
         name
-        type
+        type_
         position
         permission-overwrites 
         rate-limit-per-user
@@ -36,30 +37,26 @@
 
                 (let response (request.get url))
 
-                (if (nil? response) nil
-                    (if (!= 200 (@ response RESPONSE-STATUS)) nil
-                        {
-                            (let body 
-                                (json:fromString (@ response RESPONSE-BODY))
-                            )
-
-                            (mut messages [])
-                            (mut index 0)
-                            (while (< index (len body)) {
-                                (let msg (@ body index))
-                                (set messages 
-                                    (append messages 
-                                        (convert-json-object-message msg)
-                                    )
+                (if (and (not (nil? response)) (= 200 (@ response RESPONSE-STATUS)))
+                    {
+                        (let body 
+                            (json:fromString (@ response RESPONSE-BODY))
+                        )
+                        (mut messages [])
+                        (mut index 0)
+                        (while (< index (len body)) {
+                            (let msg (@ body index))
+                            (set messages 
+                                (append messages 
+                                    (convert-json-object-message msg)
                                 )
-                                (set index (+ index 1))
-                            })
-                            # Return
-                            messages
-                        }
-                    )
+                            )
+                            (set index (+ index 1))
+                        })
+                        # Return
+                        messages
+                    }
                 )
-
             })
         )
         (let get-new-messages
@@ -67,12 +64,10 @@
                 (let messages
                     (get-messages request id nil last-id-msg-recup nil)
                 )
-                (if (nil? messages) nil
+                (if (not (nil? messages))
                     {
-                        (set last-id-msg-recup 
-                            (@ messages (- (len messages) 1))
-                            .id
-                        )
+                        (mut tmp (@ messages (- (len messages) 1)))
+                        (set last-id-msg-recup tmp.id)
                         messages
                     }
                 )
@@ -84,7 +79,7 @@
                 &id
                 &guild-id
                 &name
-                &type
+                &type_
                 &position
                 &permission-overwrites
                 &rate-limit-per-user

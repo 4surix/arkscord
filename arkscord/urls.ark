@@ -29,25 +29,22 @@
 )
 
 
-# Conexion a discord
-(let client-discord (http:client:create "https://discordapp.com" 80))
-
-
 (let mk-request
     (fun (token) {
 
         (let headers (mk-headers token))
+        (let client-discord (http:client:create "https://discordapp.com" 80))
 
-        (let get 
-            (fun (url)
+        (let get
+            (fun (url) {
                 (http:client:get client-discord url headers)
-            )
+            })
         )
 
         (fun (
                 # Attributs
-                &client-discord
                 &headers
+                &client-discord
 
                 # Methodes
                 &get
@@ -60,7 +57,7 @@
 
 (let url-api-prefix-version 
     (fun (version) 
-        (+ "api/v" (toString version) "/")
+        (+ "api/v" (toString version))
     )
 )
 

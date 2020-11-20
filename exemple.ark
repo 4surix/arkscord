@@ -6,10 +6,11 @@
 
 (let token "TOKEN-BOT-DISCORD")
 
+
 (let bot (create-bot token))
 
 (bot.listen-channels-ids [
-    "513284461555744768"
+    "771012503923589130"
 ])
 
 (bot.on-message (fun (message) {
