@@ -7,7 +7,7 @@
 (let create-message
     (fun (
         id
-        type
+        type_
         content
         channel_id
         author
@@ -28,7 +28,7 @@
         (fun (
                 # Attributs
                 &id
-                &type
+                &type_
                 &content
                 &channel_id
                 &author
