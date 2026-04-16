@@ -1,16 +1,21 @@
 # Arkscord
-**ArkSc**ript + Di**scord** = **Arkscord**  
-Module servant à interagir avec l'API [Discord](https://discord.com/) en langage [ArkScript](https://github.com/ArkScript-lang/Ark).    
+**ArkSc**ript + Di**scord** = **Arkscord**   
+Module used to interact with the [Discord](https://discord.com/) API using [ArkScript](https://github.com/ArkScript-lang/Ark) language.
 
-# Aperçu
+# Exemple
+
 ```clojure
+(import arkscord.client)
+
 (let token "TOKEN-BOT-DISCORD")
-(let bot (create-bot token))
-(bot.listen-channels-ids [
-    "513284461555744768"
+(let bot (client:createBot token))
+
+(bot.listenChannelsIds [
+    "<CHANNEL-ID>"
 ])
-(bot.on-message (fun (message) {
-    (print message.author.name ": " message.content)
-}))
+
+(bot.onMessage (fun (message) {
+  (print message.author.name ": " message.content) }))
+
 (bot.run)
 ```
