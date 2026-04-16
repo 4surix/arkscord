@@ -1,97 +1,82 @@
-# ArkScript 3.0.13
+# ArkScript 4.5.0
 # ----------------------------------------------------------------------------
 
-(import "http.arkm")
-(import "json.arkm")
+(import std.Sys)
 
-(import "./urls.ark")
-(import "./objects/main.ark")
-(import "./convert/main.ark")
+(import arkscord.urls)
+(import arkscord.objects.main)
+(import arkscord.convert.main)
 
-
-(let version "0.0.1")
-
+(let version "0.1.0")
 
 # Bot
-(let create-bot
-    (fun (token) {
+(let createBot (fun (token) {
 
-        # Attribut
-        (mut running true)
-        (mut request (mk-request token))
-        (mut channels-listened [])
+  # Attributs
+  (mut running? true)
+  (mut request (urls:mk-request token))
+  (mut channelsListened [])
 
-        # Events
-        (mut func_on-message nil)
-        (let on-message (fun (func) (set func_on-message func)))
+  # Events
+  (mut __onMessage_function nil)
+  (let onMessage (fun (func)
+    (set __onMessage_function func)))
 
-        # Methodes
-        (let listen-channels-ids
-            (fun (ids-channels) {
-                (mut index 0)
-                (while (< index (len ids-channels)) {
-                    (let url (url-api-channel (@ ids-channels index)))
-                    (let response (request.get url))
-                    (if (not (nil? response))
-                        (if (= 200 (@ response RESPONSE-STATUS))
-                            {
-                                (set channels-listened
-                                    (append channels-listened
-                                        (convert-json-object-channel 
-                                            (json:fromString 
-                                                (@ response RESPONSE-BODY)
-                                ))))
-                            }
-                        )
-                    )
-                    (set index (+ 1 index))
-                })
-            })
-        )
-        (let run (quote {
-            (while (= running true) {
-                (if (not (nil? func_on-message))
-                    {
-                        (mut index 0)
-                        (while (< index (len channels-listened)) {
-                            (let messages (
-                                (@ channels-listened index).get-new-messages
-                                request
-                            ))
-                            (if (not (nil? messages))
-                                {
-                                    (mut index__ 0)
-                                    (while (< index__ (len messages)) {
-                                        (func_on-message (@ messages index__))
-                                        (set index__ (+ index__ 1))
-                                    })
-                                }
-                            )
-                            (set index (+ index 1))
-                            (sys:sleep (* 1 1000))
-                        })
-                    }
-                )
-            })
-            (sys:sleep (* 1 1000))
-        }))
+  # Methodes
+  (let listenChannelsIds (fun (ids-channels) {
+    (mut index 0)
+    (while (< index (len ids-channels)) {
+      (let channelId (@ ids-channels index))
+      (let url (urls:url-api-channel channelId))
+      (let response
+        (request.get url))
+      (if (not (nil? response))
+        (if (= 200 (@ response urls:RESPONSE-STATUS))
+          {
+            (print "Channel added: " (toString channelId))
+            (set channelsListened (append channelsListened (channel:convert-json-object-channel (json:fromString (@ response urls:RESPONSE-BODY))))) }
+          {
+            (print "Error : " (@ response urls:RESPONSE-BODY)) })
+        (print "Couldn't reach the server."))
 
-        (fun (
-                # Attributs
-                &token
-                &running
-                &request
-                &channels-listened
+      (set index (+ 1 index)) }) }))
 
-                # Events
-                &on-message
-                &func_on-message
+  (let run (fun () {
+    (if (not (nil? __onMessage_function))
+      {
+        (while (= running? true) {
+          (mut i 0)
+          (while (< i (len channelsListened)) {
+            (let channel (@ channelsListened i))
+            (let messages
+              (channel.getNewMessages request))
 
-                # Methodes
-                &listen-channels-ids
-                &run
-            )
-            ()
-        )
-    })
-)
+            (if (not (nil? messages))
+              {
+                (mut j 0)
+                (while (< j (len messages)) {
+                  (__onMessage_function (@ messages j))
+                  (set j (+ j 1)) }) })
+
+            (set i (+ i 1))
+            (sys:sleep (* 1 1000)) }) })
+          (sys:sleep (* 5 1000)) }) }))
+
+  (let stop (fun () {
+    (set running? false) }))
+
+  (fun (
+    # Attributs #
+    &token
+    &running?
+    &request
+    &channelsListened
+
+    # Events #
+    &onMessage
+    &__onMessage_function
+
+    # Methodes #
+    &listenChannelsIds
+    &run
+    &stop) ()) }))

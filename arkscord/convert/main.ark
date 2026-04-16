@@ -1,6 +1,6 @@
-# ArkScript 3.0.13
+# ArkScript 4.5.0
 # ----------------------------------------------------------------------------
 
-(import "./author.ark")
-(import "./channel.ark")
-(import "./message.ark")
+(import arkscord.convert.author)
+(import arkscord.convert.channel)
+(import arkscord.convert.message)

@@ -1,20 +1,14 @@
-# ArkScript 3.0.13
+# ArkScript 4.5.0
 # ----------------------------------------------------------------------------
 
-(import "json.arkm")
+(import json)
 
-(import "../objects/author.ark")
+(import arkscord.objects.author)
 
-
-(let convert-json-object-author
-    (fun (author)
-        (create-object-author
-            (json:get author "id")
-            (json:get author "username")
-            (json:get author "avatar")
-            (json:get author "discriminator")
-            (json:get author "public_flags")
-            (json:get author "bot")
-        )
-    )
-)
+(let convert-json-object-author (fun (author) (create-object-author
+  (json:get author "id")
+  (json:get author "username")
+  (json:get author "avatar")
+  (json:get author "discriminator")
+  (json:get author "public_flags")
+  (json:get author "bot"))))

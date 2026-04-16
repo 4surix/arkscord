@@ -1,49 +1,43 @@
-# ArkScript 3.0.13
+# ArkScript 4.5.0
 # ----------------------------------------------------------------------------
 
-(import "../convert/author.ark")
+(import arkscord.convert.author)
 
+(let create-message (fun (
+  id
+  type__
+  content
+  channelId
+  authorJSON
+  attachments
+  embeds
+  mentions
+  mentionRoles
+  pinned
+  mentionEveryone?
+  tts?
+  timestamp
+  editedTimestamp
+  flags
+  pinned?) {
 
-(let create-message
-    (fun (
-        id
-        type_
-        content
-        channel_id
-        author
-        attachments
-        embeds
-        mentions
-        mention_roles
-        pinned
-        mention_everyone
-        tts
-        timestamp
-        edited_timestamp
-        flags
-    ) {
+  (let author (author:convert-json-object-author authorJSON))
 
-        (let author (convert-json-object-author author))
-
-        (fun (
-                # Attributs
-                &id
-                &type_
-                &content
-                &channel_id
-                &author
-                &attachments
-                &embeds
-                &mentions
-                &mention_roles
-                &pinned
-                &mention_everyone
-                &tts
-                &timestamp
-                &edited_timestamp
-                &flags
-            )
-            ()
-        )
-    })
-)
+  (fun (
+    # Attributs #
+    &id
+    &type__
+    &content
+    &channelId
+    &author
+    &attachments
+    &embeds
+    &mentions
+    &mentionRoles
+    &pinned
+    &mentionEveryone?
+    &tts?
+    &timestamp
+    &editedTimestamp
+    &flags
+    &pinned?) ()) }))
