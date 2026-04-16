@@ -2,6 +2,8 @@
 # ----------------------------------------------------------------------------
 
 (import std.IO)
+(import std.String)
+(import std.Switch)
 
 (import arkscord.client)
 
@@ -11,13 +13,22 @@
 (let bot (client:createBot token))
 
 (bot.listenChannelsIds [
-    "779683200607715350"
+    "<CHANNEL-ID>"
 ])
 
 (bot.onMessage (fun (message) {
   (print message.author.name ": " message.content)
+  (mut args (string:split message.content " "))
+  (mut command (pop! args 0))
+  (manageCommands message command args) }))
 
-  (if (= message.content "!stop")
-  	(bot.stop) ) }))
+(let manageCommands (fun (message command args) {
+  (switch command
+    "!stop" (bot.stop)
+    "!add" {
+      (let a (toNumber (@ args 0)))
+      (let b (toNumber (@ args 1)))
+      (message.reply (+ a b)) }
+    _ () ) }))
 
 (bot.run)

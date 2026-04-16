@@ -1,6 +1,7 @@
 # ArkScript 4.5.0
 # ----------------------------------------------------------------------------
 
+(import json)
 (import http)
 
 # Variable index
@@ -12,25 +13,33 @@
 (let info-version "0.1.0")
 
 # Headers
-(let mk-headers (fun (token) (http:headers
+(let makeHeaders (fun (token) (http:headers
     "Authorization" (+ "Bot " token)
     "User-Agent" (+ "DiscordBot (" info-url ", " info-version ")")
     "Content-Type" "application/json")))
 
-(let mk-request (fun (token) {
-  (let headers (mk-headers token))
+(mut request nil)
+
+(let configRequest (fun (token) {
+  (let mimetype "application/json")
+  (let headers (makeHeaders token))
   (let clientDiscord (http:client "https://discord.com" 443))
 
   (let get (fun (url) {
     (http:get clientDiscord url headers) }))
 
-  (fun (
+  (let post (fun (url body) {
+    (http:post clientDiscord url (json:toString body) mimetype headers) }))
+
+  (set request (fun (
     # Attributs #
+    &mimetype
     &headers
     &clientDiscord
 
     # Methodes #
-    &get) ()) }))
+    &get
+    &post) ())) }))
 
 (let version 10)
 

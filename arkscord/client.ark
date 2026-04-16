@@ -12,9 +12,10 @@
 # Bot
 (let createBot (fun (token) {
 
+  (urls:configRequest token)
+
   # Attributs
   (mut running? true)
-  (mut request (urls:mk-request token))
   (mut channelsListened [])
 
   # Events
@@ -29,7 +30,7 @@
       (let channelId (@ ids-channels index))
       (let url (urls:url-api-channel channelId))
       (let response
-        (request.get url))
+        (urls:request.get url))
       (if (not (nil? response))
         (if (= 200 (@ response urls:RESPONSE-STATUS))
           {
@@ -49,7 +50,7 @@
           (while (< i (len channelsListened)) {
             (let channel (@ channelsListened i))
             (let messages
-              (channel.getNewMessages request))
+              (channel.getNewMessages))
 
             (if (not (nil? messages))
               {
@@ -69,7 +70,6 @@
     # Attributs #
     &token
     &running?
-    &request
     &channelsListened
 
     # Events #

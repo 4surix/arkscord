@@ -1,6 +1,9 @@
 # ArkScript 4.5.0
 # ----------------------------------------------------------------------------
 
+(import json)
+
+(import arkscord.urls)
 (import arkscord.convert.author)
 
 (let create-message (fun (
@@ -13,15 +16,28 @@
   embeds
   mentions
   mentionRoles
-  pinned
+  pinned?
   mentionEveryone?
   tts?
   timestamp
   editedTimestamp
-  flags
-  pinned?) {
+  flags) {
 
   (let author (author:convert-json-object-author authorJSON))
+
+  (let reply (fun (value) {
+    (let url (urls:url-api-channel-messages channelId))
+
+    (let body 
+      (json:fromList [
+        "content" (toString value)]))
+
+    (let response
+      (urls:request.post url body))
+
+    (if (and (not (nil? response)) (= 200 (@ response urls:RESPONSE-STATUS)))
+      {
+        (print "Send.")}) }))
 
   (fun (
     # Attributs #
@@ -34,10 +50,12 @@
     &embeds
     &mentions
     &mentionRoles
-    &pinned
+    &pinned?
     &mentionEveryone?
     &tts?
     &timestamp
     &editedTimestamp
     &flags
-    &pinned?) ()) }))
+
+    # Methodes #
+    &reply) ()) }))

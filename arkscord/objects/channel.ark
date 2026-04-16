@@ -9,7 +9,7 @@
   (mut last-id-msg-recup lastMessageId)
 
   # Methodes
-  (let getMessages (fun (request limit before after around) {
+  (let getMessages (fun (limit before after around) {
     (let url (+
       (urls:url-api-channel-messages id)
       "?limit=" (toString limit)
@@ -24,7 +24,7 @@
         (+ "&around=" (toString around)))))
 
     (let response
-      (request.get url))
+      (urls:request.get url))
 
     (if (and (not (nil? response)) (= 200 (@ response urls:RESPONSE-STATUS)))
       {
@@ -41,14 +41,28 @@
         # Return
         messages }) }))
 
-  (let getNewMessages (fun (request) {
-    (let messages (getMessages request 100 nil last-id-msg-recup nil))
+  (let getNewMessages (fun () {
+    (let messages (getMessages 100 nil last-id-msg-recup nil))
 
     (if (not (or (nil? messages) (empty? messages)))
       {
         (mut tmp (@ messages (- (len messages) 1)))
         (set last-id-msg-recup tmp.id)
         messages }) }))
+
+  (let sendMessage (fun (content) {
+    (let url (urls:url-api-channel-messages id))
+
+    (let body 
+      (json:fromList [
+        "content" (toString value)]))
+
+    (let response
+      (urls:request.post url body))
+
+    (if (and (not (nil? response)) (= 200 (@ response urls:RESPONSE-STATUS)))
+      {
+        (print "Send.")}) }))
 
   (fun (
     # Attributs #
@@ -67,4 +81,5 @@
 
     # Methodes #
     &getMessages
-    &getNewMessages) ()) }))
+    &getNewMessages
+    &sendMessage) ()) }))

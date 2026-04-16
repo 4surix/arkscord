@@ -20,5 +20,4 @@
   (json:get msg "tts")
   (json:get msg "timestamp")
   (json:get msg "edited_timestamp")
-  (json:get msg "flags")
-  (json:get msg "pinned"))))
+  (json:get msg "flags"))))
